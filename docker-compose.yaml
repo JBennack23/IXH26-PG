@@ -1,0 +1,38 @@
+services:
+    backblock:
+        build:
+            context: ./backblock
+            dockerfile: Dockerfile
+        container_name: backblock
+        ports:
+            - "5000:5000"
+        volumes:
+            - blockchain-vm:/app/ext-vm
+        env_file: "./backblock/env/common.env"
+        environment:
+            - XRPL_NODE_URL=ws://xrpl-node:6006
+        depends_on:
+            - xrpl-node
+
+    xrpl-node:
+        image: rippleci/xrpld:latest
+        container_name: ixh26_xrpl_node
+        command: ["--conf", "/etc/xrpld/xrpld.cfg", "--standalone"]
+        ports:
+            - "5005:5005" # JSON-RPC local Admin
+            - "6006:6006" # WebSocket public local
+        volumes:
+            - ./xrpl_node/xrpld.cfg:/etc/xrpld/xrpld.cfg:ro
+
+    sensor-simulator:
+        build:
+            context: ./sensor_simulator
+            dockerfile: Dockerfile
+        container_name: sensor
+        command: ["sleep", "infinity"]
+        volumes:
+            - ./sensor_simulator/data:/app/src/data
+        depends_on:
+            - backblock
+volumes:
+    blockchain-vm:
