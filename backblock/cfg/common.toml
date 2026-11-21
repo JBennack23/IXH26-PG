@@ -1,0 +1,4 @@
+[fastapi]
+app_name = "IXH26 Backblock Gateway"
+version = "1.0.0"
+description = "Generic adapter layer interfacing FastAPI with the local XRPL Standalone Node."
